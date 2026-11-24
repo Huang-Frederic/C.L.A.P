@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "C.L.A.P EDL",
+  "description": "Liste de montage produite par Claude. Claude choisit les plans ; le builder calcule les timecodes exacts.",
+  "type": "object",
+  "required": ["mode", "cuts"],
+  "properties": {
+    "mode": { "enum": ["vlog", "clips", "amv"] },
+    "title": { "type": "string", "description": "Nom du brouillon CapCut" },
+    "rushes_dir": { "type": "string", "description": "Dossier de base pour les chemins relatifs de clip" },
+    "canvas": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "integer", "default": 1080 },
+        "height": { "type": "integer", "default": 1920 },
+        "fps": { "type": "integer", "default": 30 }
+      }
+    },
+    "music": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string" },
+        "beats": { "type": "array", "items": { "type": "number" }, "description": "Timestamps des beats en secondes, fournis par l'analyseur" },
+        "offset": { "type": "number", "default": 0, "description": "Début du morceau utilisé (s)" },
+        "volume": { "type": "number", "default": 1 }
+      }
+    },
+    "cuts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["clip"],
+        "properties": {
+          "clip": { "type": "string" },
+          "src_in": { "type": "number", "default": 0, "description": "Point d'entrée dans le rush (s)" },
+          "duration": { "type": "number", "description": "Durée sur la timeline (s) — modes vlog/clips" },
+          "beat_start": { "type": "integer", "description": "Index du beat de début — mode amv" },
+          "beat_end": { "type": "integer", "description": "Index du beat de fin (exclu) — mode amv" },
+          "speed": { "type": "number", "default": 1 },
+          "volume": { "type": "number", "default": 1 },
+          "note": { "type": "string", "description": "Pourquoi Claude a choisi ce plan (ignoré par le builder)" }
+        }
+      }
+    },
+    "texts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["text", "start", "duration"],
+        "properties": {
+          "text": { "type": "string" },
+          "start": { "type": "number" },
+          "duration": { "type": "number" }
+        }
+      }
+    }
+  }
+}

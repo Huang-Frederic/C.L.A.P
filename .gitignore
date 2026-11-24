@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.env
+
+# Sorties de C.L.A.P (jamais de rushs dans le repo)
+output/
+cache/
+proxies/
+*.mp4
+*.MP4
+*.mov
+*.MOV
+*.mp3
+*.wav

@@ -1,0 +1,29 @@
+[project]
+name = "clap"
+version = "0.1.0"
+description = "C.L.A.P — Claude-Led Automated Production : montage vidéo automatique (Vlog, Clips, AMV) vers CapCut"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pycapcut>=0.0.4",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+analyze = [
+    "opencv-python",
+    "numpy",
+    "librosa",
+    "scenedetect[opencv]",
+    "faster-whisper",
+]
+
+[project.scripts]
+clap = "clap.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["clap*"]

@@ -1,0 +1,17 @@
+{
+  "mode": "amv",
+  "title": "CLAP_AMV_EXEMPLE",
+  "rushes_dir": "D:/dji_temp/ski_huang_2026",
+  "canvas": { "width": 1080, "height": 1920, "fps": 30 },
+  "music": {
+    "path": "D:/musique/track.mp3",
+    "offset": 0,
+    "beats": [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]
+  },
+  "cuts": [
+    { "clip": "DJI_0001.MP4", "src_in": 12.4, "beat_start": 0, "beat_end": 4, "note": "plan large d'intro, calme" },
+    { "clip": "DJI_0007.MP4", "src_in": 3.1, "beat_start": 4, "beat_end": 6, "speed": 0.5, "note": "ralenti sur le saut" },
+    { "clip": "DJI_0012.MP4", "src_in": 40.0, "beat_start": 6, "beat_end": 12, "note": "descente rapide sur le drop" }
+  ],
+  "texts": [{ "text": "Ski 2026", "start": 0, "duration": 2 }]
+}
