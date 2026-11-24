@@ -1,0 +1,22 @@
+# Configuration de C.L.A.P — copie ce fichier en clap.toml (non versionné) et adapte.
+# Chemins Windows : garde les apostrophes simples, elles évitent d'avoir à doubler les \.
+# Une variable d'environnement (ex. CLAP_HWACCEL=none) remplace ponctuellement une valeur.
+
+[capcut]
+# CapCut > Paramètres > Emplacement des brouillons
+drafts_dir = '~\AppData\Local\CapCut\User Data\Projects\com.lveditor.draft'
+
+[paths]
+rushes_dir = ''          # dossier de rushs par défaut (smoke-test, analyze)
+output_dir = 'output'    # rushes.json, planches contact, EDL (relatif = depuis la racine du repo)
+cache_dir = 'cache'      # analyses déjà faites, pour reprendre sans tout refaire
+
+[analyze]
+hwaccel = 'auto'         # auto (cuda, puis d3d11/dxva, puis logiciel) | cuda | none
+ffmpeg = 'ffmpeg'        # ou chemin complet vers ffmpeg.exe
+ffprobe = 'ffprobe'
+whisper_model = 'small'  # tiny | base | small | medium | large-v3
+device = 'cuda'          # cuda | cpu
+
+[claude]
+model = 'claude-haiku-5-5'   # mode 100 % automatique via l'API (clé dans .env)

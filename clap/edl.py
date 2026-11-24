@@ -44,10 +44,19 @@ class Text:
 
 @dataclass
 class Music:
-    path: str
+    path: str = ""
     beats: list[float] = field(default_factory=list)
     offset: float = 0.0   # où commencer dans le morceau (s)
     volume: float = 1.0
+    beats_file: str = ""  # sortie de `clap beats` : fournit path + beats si absents
+
+    def __post_init__(self) -> None:
+        if self.beats_file:
+            grid = json.loads(Path(self.beats_file).read_text(encoding="utf-8"))
+            self.path = self.path or grid["path"]
+            self.beats = self.beats or grid["beats"]
+        if not self.path:
+            raise EDLError("music : il faut path ou beats_file")
 
 
 @dataclass
@@ -126,6 +135,10 @@ class EDL:
                 beats = self.music.beats  # type: ignore[union-attr]
                 start = round((beats[c.beat_start] - self.music.offset) * US)  # type: ignore[union-attr]
                 dur = round((beats[c.beat_end] - beats[c.beat_start]) * US)
+                end = start + dur
+                if start < 50_000:  # beat à moins de 50 ms du début : on colle le plan à 0
+                    start = 0
+                dur = end - max(start, 0)
                 start = max(start, 0)
             else:
                 start = cursor

@@ -18,9 +18,10 @@
     },
     "music": {
       "type": "object",
-      "required": ["path"],
+      "description": "Donner path, ou beats_file (sortie de `clap beats`) qui fournit path et beats.",
       "properties": {
         "path": { "type": "string" },
+        "beats_file": { "type": "string", "description": "Fichier .beats.json produit par `clap beats`" },
         "beats": { "type": "array", "items": { "type": "number" }, "description": "Timestamps des beats en secondes, fournis par l'analyseur" },
         "offset": { "type": "number", "default": 0, "description": "Début du morceau utilisé (s)" },
         "volume": { "type": "number", "default": 1 }

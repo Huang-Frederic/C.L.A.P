@@ -1,11 +1,10 @@
 """Analyseur : dossier de rushs -> rushes.json + planches contact (aucun LLM ici).
 
-Prévu :
-  - métadonnées (ffprobe) : durée, fps, date, GPS, télémétrie GoPro/DJI
-  - découpage en plans (PySceneDetect)
-  - qualité par plan : flou, secousses, exposition (OpenCV)
-  - intensité de mouvement, pics audio
-  - transcription horodatée (faster-whisper)
-  - planches contact avec timecodes incrustés, pour que Claude "voie" les rushs
-  - grille rythmique de la musique (librosa) pour le mode AMV
+  - media.py  : ffprobe / décodage basse résolution (CUDA si dispo) / audio mono
+  - video.py  : métriques par échantillon, plans, temps forts
+  - sheets.py : planches contact horodatées et vues d'ensemble
+  - run.py    : `clap analyze`, avec cache pour reprendre là où on s'est arrêté
+  - music.py  : `clap beats`, grille rythmique pour le mode AMV
+
+À venir : transcription horodatée (faster-whisper), recherche de plans par description (CLIP).
 """

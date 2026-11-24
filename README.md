@@ -29,31 +29,62 @@ Le format de l'EDL est décrit dans [`schemas/edl.schema.json`](schemas/edl.sche
 
 ## Installation (Windows)
 
+Prérequis : Python 3.11+ et ffmpeg dans le PATH (`winget install Gyan.FFmpeg`).
+
 ```powershell
-pip install -e .
-copy .env.example .env   # puis adapte les chemins
+pip install -e ".[analyze]"
+copy clap.example.toml clap.toml   # puis adapte les chemins
 ```
 
-Le `.env` contient tes chemins (brouillons CapCut, rushs) et réglages (modèle Whisper, GPU, clé API optionnelle). Il n'est jamais commité ; `.env.example` sert de modèle.
+Configuration :
+- **`clap.toml`** contient les chemins (brouillons CapCut, rushs, sorties) et les réglages (décodage, Whisper, modèle Claude). Il n'est pas versionné, et `clap.example.toml` sert de modèle.
+- **`.env`** ne sert qu'aux secrets (`ANTHROPIC_API_KEY`, pour le futur mode automatique via l'API).
+- **Une variable d'environnement** remplace ponctuellement un réglage, par exemple `$env:CLAP_HWACCEL="none"; clap analyze`.
 
 ## Utilisation
 
 ```powershell
 # 1. Vérifier que ta version de CapCut accepte les brouillons générés
-clap smoke-test                     # utilise CLAP_RUSHES_DIR du .env
+clap smoke-test                     # utilise [paths] rushes_dir de clap.toml
 clap smoke-test "D:\autre\dossier"  # ou un dossier précis
 
-# 2. Transformer une EDL en brouillon CapCut
-clap build examples/amv_example.json   # écrit dans CAPCUT_DRAFTS_DIR
+# 2. Analyser un dossier de rushs -> output/<dossier>/rushes.json + planches contact
+clap analyze --limit 20                # pour tester sur 20 vidéos
+clap analyze                           # tout le dossier (reprend là où il s'est arrêté)
+
+# 3. Grille rythmique d'une musique (mode AMV)
+clap beats D:\musique\track.mp3       # -> track.beats.json
+
+# 4. Transformer une EDL en brouillon CapCut
+clap build examples/amv_example.json   # écrit dans [capcut] drafts_dir
 ```
 
-Le dossier des brouillons (`CAPCUT_DRAFTS_DIR`) se trouve dans CapCut, à **Paramètres > Emplacement des brouillons**. `--drafts` permet de le remplacer ponctuellement. Après un build, ferme puis rouvre CapCut pour voir le nouveau brouillon.
+### Ce que produit `clap analyze`
+
+```
+output/ski_huang_2026/
+  rushes.json          # le dossier de rushs que Claude lit
+  overview/            # une miniature par vidéo, numérotée, 30 par planche
+  contact/             # une planche par vidéo, 12 miniatures horodatées
+```
+
+Pour chaque vidéo : durée, date et jour, orientation (horizontale/verticale), plans avec qualité (netteté + exposition), mouvement, mouvement de caméra (fixe/lent/rapide), niveau sonore, alertes (sombre, surexposé…), et jusqu'à 3 **temps forts** candidats avec leur raison (« beaucoup de mouvement », « pic sonore », « image propre »).
+
+L'analyse se fait sur des miniatures 320 px à 4 images/s. Avec `hwaccel = 'auto'` ou `'cuda'`, le décodage de la 4K HEVC passe par la carte graphique ; si ça échoue, C.L.A.P repasse automatiquement en décodage logiciel. Chaque vidéo analysée est mise en cache : on peut interrompre et relancer sans tout refaire.
+
+### Ce que produit `clap beats`
+
+Le tempo, les beats (en secondes), les temps forts de chaque mesure, l'énergie de chaque beat et les sections du morceau (calme / moyen / fort, avec les **drops** marqués). Dans l'EDL, `"music": {"beats_file": "track.beats.json"}` suffit : Claude place les plans par index de beat (`beat_start` / `beat_end`).
+
+Le dossier des brouillons (`[capcut] drafts_dir`) se trouve dans CapCut, à **Paramètres > Emplacement des brouillons**. `--drafts` permet de le remplacer ponctuellement. Après un build, ferme puis rouvre CapCut pour voir le nouveau brouillon.
 
 ## Feuille de route
 
 - [x] Format EDL et builder CapCut (pyCapCut)
-- [ ] Analyseur : plans, qualité, mouvement, audio, transcription, planches contact
-- [ ] Grille rythmique de la musique pour le mode AMV
+- [x] Analyseur : plans, qualité, mouvement, audio, temps forts, planches contact
+- [x] Grille rythmique de la musique pour le mode AMV
+- [ ] Transcription horodatée (Whisper) pour le mode Vlog
+- [ ] Recherche de plans par description (CLIP)
 - [ ] Prompts « réalisateur » pour Vlog, Clips et AMV
 - [ ] Serveur MCP, pour l'utiliser depuis Claude Desktop ou Claude Code
 - [ ] Recadrage intelligent 16:9 → 9:16, sous-titres

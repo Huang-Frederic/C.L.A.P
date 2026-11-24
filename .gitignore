@@ -6,6 +6,7 @@ venv/
 build/
 dist/
 .env
+clap.toml
 
 # Sorties de C.L.A.P (jamais de rushs dans le repo)
 output/
